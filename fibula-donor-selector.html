@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fibula Free Flap - Donor Side Selector</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Fibula Selector">
+    <meta name="theme-color" content="#667eea">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .question-section {
+            margin-bottom: 30px;
+        }
+
+        .question-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+            display: block;
+            font-size: 16px;
+        }
+
+        .options {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .option-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 15px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .option-btn[data-value="posterior"],
+        .option-btn[data-value="intraoral"] {
+            border-color: #b8c5ea;
+        }
+
+        .option-btn:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .option-btn.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+            color: white;
+        }
+
+        .result-container {
+            margin-top: 40px;
+            padding: 30px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            text-align: center;
+            display: none;
+            transition: background 0.6s ease;
+        }
+
+        .result-container.contralateral {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .result-container.ipsilateral {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .result-container.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .result-answer {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .result-explanation {
+            font-size: 14px;
+            line-height: 1.6;
+            opacity: 0.95;
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .reset-btn {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: white;
+            color: #f5576c;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .info-box p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Fibula Free Flap Donor Side Selector</h1>
+        <p class="subtitle">Mandibular Reconstruction Planning Tool</p>
+
+        <div class="info-box">
+            <h3>Standard Rule</h3>
+            <p>For mandibular reconstruction with <strong>intraoral</strong> skin paddle and <strong>posterior</strong> pedicle orientation, use the <strong>contralateral</strong> leg. Change laterality for each variable that differs from standard.</p>
+        </div>
+
+        <div class="question-section">
+            <label class="question-label">1. Which side is the mandible defect?</label>
+            <div class="options">
+                <button class="option-btn" data-question="defect" data-value="left">Left</button>
+                <button class="option-btn" data-question="defect" data-value="right">Right</button>
+            </div>
+        </div>
+
+        <div class="question-section">
+            <label class="question-label">2. Skin paddle location?</label>
+            <div class="options">
+                <button class="option-btn" data-question="paddle" data-value="intraoral">Intraoral</button>
+                <button class="option-btn" data-question="paddle" data-value="external">External</button>
+            </div>
+        </div>
+
+        <div class="question-section">
+            <label class="question-label">3. Desired pedicle orientation?</label>
+            <div class="options">
+                <button class="option-btn" data-question="pedicle" data-value="posterior">Posterior</button>
+                <button class="option-btn" data-question="pedicle" data-value="anterior">Anterior</button>
+            </div>
+        </div>
+
+        <div class="result-container" id="result">
+            <div class="result-title">Use Donor Leg:</div>
+            <div class="result-answer" id="donorSide">—</div>
+            <div class="result-explanation" id="explanation">—</div>
+            <button class="reset-btn" onclick="resetForm()">Start New Case</button>
+        </div>
+    </div>
+
+    <script>
+        const selections = {
+            defect: null,
+            paddle: null,
+            pedicle: null
+        };
+
+        // Add click handlers to all option buttons
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const question = this.dataset.question;
+                const value = this.dataset.value;
+                
+                // Remove selected class from siblings
+                this.parentElement.querySelectorAll('.option-btn').forEach(b => {
+                    b.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked button
+                this.classList.add('selected');
+                
+                // Store selection
+                selections[question] = value;
+                
+                // Calculate and update result if all questions answered
+                if (selections.defect && selections.paddle && selections.pedicle) {
+                    calculateDonorSide();
+                } else {
+                    // Hide result if not all answered
+                    document.getElementById('result').classList.remove('show');
+                }
+            });
+        });
+
+        function calculateDonorSide() {
+            let donorSide = '';
+            let explanation = '';
+            
+            const defect = selections.defect;
+            const paddle = selections.paddle;
+            const pedicle = selections.pedicle;
+            
+            // Start with contralateral (standard)
+            // Then flip for each variable that changes from standard
+            let useContralateral = true;
+            
+            const changedVariables = [];
+            
+            // Check if external paddle (non-standard)
+            if (paddle === 'external') {
+                useContralateral = !useContralateral;
+                changedVariables.push('external skin paddle');
+            }
+            
+            // Check if anterior pedicle (non-standard)
+            if (pedicle === 'anterior') {
+                useContralateral = !useContralateral;
+                changedVariables.push('anterior pedicle orientation');
+            }
+            
+            const resultContainer = document.getElementById('result');
+            
+            // Calculate donor side based on final state
+            if (useContralateral) {
+                donorSide = defect === 'left' ? 'Right' : 'Left';
+                resultContainer.className = 'result-container show contralateral';
+                
+                if (changedVariables.length === 0) {
+                    explanation = `Standard approach for ${defect} mandible defect: use the contralateral leg with <strong>intraoral</strong> skin paddle and <strong>posterior</strong> pedicle orientation.`;
+                } else {
+                    // Both variables changed, so we're back to contralateral
+                    explanation = `Use the contralateral leg. Both ${changedVariables.join(' and ')} differ from standard, returning to contralateral orientation.`;
+                }
+            } else {
+                // Ipsilateral
+                donorSide = defect === 'left' ? 'Left' : 'Right';
+                resultContainer.className = 'result-container show ipsilateral';
+                explanation = `Use the ipsilateral leg due to ${changedVariables.join(' and ')}.`;
+            }
+            
+            // Display result
+            document.getElementById('donorSide').textContent = donorSide + ' Leg';
+            document.getElementById('explanation').innerHTML = explanation;
+        }
+
+        function resetForm() {
+            selections.defect = null;
+            selections.paddle = null;
+            selections.pedicle = null;
+            
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            document.getElementById('result').classList.remove('show');
+        }
+    </script>
+</body>
+</html>
